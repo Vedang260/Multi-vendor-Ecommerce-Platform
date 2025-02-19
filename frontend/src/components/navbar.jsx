@@ -3,27 +3,39 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
-    <nav className="bg-[#0a192f] shadow-lg">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-[#0a192f] shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="text-white text-2xl font-bold">
-            <Link to="/">E-Shop</Link>
+            <Link to="/">OppuLent</Link>
           </div>
 
           {/* Navigation Links */}
           <div className="hidden md:flex space-x-6">
-            <Link to="/" className="text-white text-lg hover:text-yellow-400 transition">
+            <Link
+              to="/"
+              className="relative text-white text-lg transition-all duration-300 ease-in-out hover:text-yellow-400 hover:scale-105">
               Home
+              <span className="absolute left-1/2 bottom-[-2px] w-0 h-[2px] bg-yellow-400 transition-all duration-300 ease-in-out group-hover:w-full transform -translate-x-1/2"></span>
             </Link>
-            <Link to="/shop" className="text-white text-lg hover:text-yellow-400 transition">
+            <Link
+              to="/shop"
+              className="relative text-white text-lg transition-all duration-300 ease-in-out hover:text-yellow-400 hover:scale-105">
               Shop
+              <span className="absolute left-1/2 bottom-[-2px] w-0 h-[2px] bg-yellow-400 transition-all duration-300 ease-in-out group-hover:w-full transform -translate-x-1/2"></span>
             </Link>
-            <Link to="/vendors" className="text-white text-lg hover:text-yellow-400 transition">
-              Vendors
+            <Link
+              to="/about"
+              className="relative text-white text-lg transition-all duration-300 ease-in-out hover:text-yellow-400 hover:scale-105">
+              About Us
+              <span className="absolute left-1/2 bottom-[-2px] w-0 h-[2px] bg-yellow-400 transition-all duration-300 ease-in-out group-hover:w-full transform -translate-x-1/2"></span>
             </Link>
-            <Link to="/contact" className="text-white text-lg hover:text-yellow-400 transition">
+            <Link
+              to="/contact"
+              className="relative text-white text-lg transition-all duration-300 ease-in-out hover:text-yellow-400 hover:scale-105">
               Contact
+              <span className="absolute left-1/2 bottom-[-2px] w-0 h-[2px] bg-yellow-400 transition-all duration-300 ease-in-out group-hover:w-full transform -translate-x-1/2"></span>
             </Link>
           </div>
 

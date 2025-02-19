@@ -6,6 +6,8 @@ function SignupPage() {
   const [phone, setPhone] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
+  const [role, setRole] = useState("customer"); // Default role: customer
+  
 
   const handleSendOtp = () => {
     if (phone) {
@@ -18,7 +20,7 @@ function SignupPage() {
 
   const handleVerifyOtp = () => {
     if (otp === "1234") {
-      alert("OTP Verified! Proceeding with Signup.");
+      alert(`OTP Verified! You are signing up as a ${role}.`);
     } else {
       alert("Invalid OTP. Try again.");
     }
@@ -41,6 +43,7 @@ function SignupPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6">
+            {/* Full Name */}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-300">
                 Full Name
@@ -55,6 +58,7 @@ function SignupPage() {
               />
             </div>
 
+            {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                 Email address
@@ -69,6 +73,7 @@ function SignupPage() {
               />
             </div>
 
+            {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                 Password
@@ -96,6 +101,55 @@ function SignupPage() {
                 buttonClass="!bg-gray-700 !border-gray-600" // Dropdown button styling
               />
             </div>
+
+            {/* Role Selection (Customer/Seller) */}
+            <div>
+            <label className="block text-sm font-medium text-gray-300">Are you a:</label>
+            <div className="mt-2 flex space-x-6">
+              {/* Customer */}
+              <label className="relative flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="role"
+                  value="customer"
+                  checked={role === "customer"}
+                  onChange={() => setRole("customer")}
+                  className="sr-only peer"
+                />
+                <div className="w-5 h-5 border-2 border-yellow-500 rounded-full flex items-center justify-center peer-checked:border-yellow-400 transition-all duration-300">
+                  {/* Inner filled circle when selected */}
+                  {role === "customer" && (
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  )}
+                </div>
+                <span className="ml-2 text-gray-300 peer-checked:text-yellow-400 transition">
+                  Customer
+                </span>
+              </label>
+
+              {/* Seller */}
+              <label className="relative flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="role"
+                  value="seller"
+                  checked={role === "seller"}
+                  onChange={() => setRole("seller")}
+                  className="sr-only peer"
+                />
+                <div className="w-5 h-5 border-2 border-yellow-500 rounded-full flex items-center justify-center peer-checked:border-yellow-400 transition-all duration-300">
+                  {/* Inner filled circle when selected */}
+                  {role === "seller" && (
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  )}
+                </div>
+                <span className="ml-2 text-gray-300 peer-checked:text-yellow-400 transition">
+                  Seller
+                </span>
+              </label>
+            </div>
+          </div>
+
 
             {/* OTP Section */}
             {otpSent && (
