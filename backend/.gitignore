@@ -1,0 +1,38 @@
+# Ignore Virtual Environment
+auth/
+
+# Ignore Python Bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Environment Variables
+.env
+*.env
+secrets.json
+
+# Ignore Database Files
+db.sqlite3
+*.sqlite3
+
+# Ignore Static and Media Files
+/static/
+/media/
+/staticfiles/
+
+# Ignore Logs
+logs/
+*.log
+*.out
+*.pid
+
+# Ignore IDE and Editor Files
+.vscode/
+.idea/
+*.iml
+
+# Ignore Django Migrations (Optional)
+*/migrations/*.pyc
+*/migrations/__pycache__/
+*/migrations/*000*.py  # Ignore initial migrations if not needed
