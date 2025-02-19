@@ -7,22 +7,83 @@ function SignupPage() {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [role, setRole] = useState("customer"); // Default role: customer
-  
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSendOtp = () => {
-    if (phone) {
-      setOtpSent(true);
-      alert("OTP Sent to " + phone);
+  // Function to send OTP
+  const handleSendOtp = async () => {
+    if (email) {
+      try {
+        const response = await fetch("https://dummyapi.com/auth/send-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          setOtpSent(true);
+          alert(data.message || "OTP Sent to " + email);
+        } else {
+          alert(data.error || "Failed to send OTP");
+        }
+      } catch (error) {
+        alert("Error sending OTP");
+      }
     } else {
-      alert("Please enter a valid phone number.");
+      alert("Please enter a valid email.");
     }
   };
 
-  const handleVerifyOtp = () => {
-    if (otp === "1234") {
-      alert(`OTP Verified! You are signing up as a ${role}.`);
-    } else {
-      alert("Invalid OTP. Try again.");
+  // Function to verify OTP
+  const handleVerifyOtp = async () => {
+    if (!otp) {
+      alert("Please enter the OTP");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://dummyapi.com/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("OTP Verified! You are signing up as a " + role);
+      } else {
+        alert(data.error || "Invalid OTP. Try again.");
+      }
+    } catch (error) {
+      alert("Error verifying OTP");
+    }
+  };
+
+  // Function to register user
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    if (!otpSent) {
+      alert("Please verify your OTP first");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://dummyapi.com/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, phone, role }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("User registered successfully!");
+      } else {
+        alert(data.error || "Failed to register");
+      }
+    } catch (error) {
+      alert("Error registering user");
     }
   };
 
@@ -34,7 +95,7 @@ function SignupPage() {
         </h2>
         <p className="mt-2 text-center text-sm text-gray-300">
           Or{" "}
-          <a href="#" className="font-medium text-yellow-500 hover:text-yellow-400 transition">
+          <a href="/login" className="font-medium text-yellow-500 hover:text-yellow-400 transition">
             sign in to your account
           </a>
         </p>
@@ -42,149 +103,117 @@ function SignupPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6">
-            {/* Full Name */}
+          <form className="space-y-6" onSubmit={handleRegister}>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-300">
-                Full Name
-              </label>
+              <label className="block text-sm font-medium text-gray-300">Full Name</label>
               <input
-                id="name"
-                name="name"
                 type="text"
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                 placeholder="Enter your full name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
 
-            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                Email address
-              </label>
+              <label className="block text-sm font-medium text-gray-300">Email address</label>
               <input
-                id="email"
-                name="email"
                 type="email"
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                 placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-gray-300">Password</label>
               <input
-                id="password"
-                name="password"
                 type="password"
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                 placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
-            {/* Phone Number with Country Code */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-300">
-                Phone Number
-              </label>
+              <label className="block text-sm font-medium text-gray-300">Phone Number</label>
               <PhoneInput
-                country={"in"} // Default country (change if needed)
+                country={"in"}
                 value={phone}
                 onChange={(phone) => setPhone(phone)}
-                inputClass="!bg-gray-700 !text-white !border-gray-600 !rounded-md !w-full" // Tailwind styling
-                buttonClass="!bg-gray-700 !border-gray-600" // Dropdown button styling
+                inputClass="!bg-gray-700 !text-white !border-gray-600 !rounded-md !w-full"
               />
             </div>
 
-            {/* Role Selection (Customer/Seller) */}
+            {/* Role Selection */}
             <div>
-            <label className="block text-sm font-medium text-gray-300">Are you a:</label>
-            <div className="mt-2 flex space-x-6">
-              {/* Customer */}
-              <label className="relative flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="role"
-                  value="customer"
-                  checked={role === "customer"}
-                  onChange={() => setRole("customer")}
-                  className="sr-only peer"
-                />
-                <div className="w-5 h-5 border-2 border-yellow-500 rounded-full flex items-center justify-center peer-checked:border-yellow-400 transition-all duration-300">
-                  {/* Inner filled circle when selected */}
-                  {role === "customer" && (
-                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  )}
-                </div>
-                <span className="ml-2 text-gray-300 peer-checked:text-yellow-400 transition">
-                  Customer
-                </span>
-              </label>
+              <label className="block text-sm font-medium text-gray-300">Are you a:</label>
+              <div className="mt-2 flex space-x-6">
+                <label className="relative flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="customer"
+                    checked={role === "customer"}
+                    onChange={() => setRole("customer")}
+                    className="sr-only peer"
+                  />
+                  <div className="w-5 h-5 border-2 border-yellow-500 rounded-full flex items-center justify-center peer-checked:border-yellow-400">
+                    {role === "customer" && <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>}
+                  </div>
+                  <span className="ml-2 text-gray-300">Customer</span>
+                </label>
 
-              {/* Seller */}
-              <label className="relative flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="role"
-                  value="seller"
-                  checked={role === "seller"}
-                  onChange={() => setRole("seller")}
-                  className="sr-only peer"
-                />
-                <div className="w-5 h-5 border-2 border-yellow-500 rounded-full flex items-center justify-center peer-checked:border-yellow-400 transition-all duration-300">
-                  {/* Inner filled circle when selected */}
-                  {role === "seller" && (
-                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  )}
-                </div>
-                <span className="ml-2 text-gray-300 peer-checked:text-yellow-400 transition">
-                  Seller
-                </span>
-              </label>
+                <label className="relative flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="vendor"
+                    checked={role === "vendor"}
+                    onChange={() => setRole("vendor")}
+                    className="sr-only peer"
+                  />
+                  <div className="w-5 h-5 border-2 border-yellow-500 rounded-full flex items-center justify-center peer-checked:border-yellow-400">
+                    {role === "vendor" && <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>}
+                  </div>
+                  <span className="ml-2 text-gray-300">Vendor</span>
+                </label>
+              </div>
             </div>
-          </div>
-
 
             {/* OTP Section */}
             {otpSent && (
               <div>
-                <label htmlFor="otp" className="block text-sm font-medium text-gray-300">
-                  Enter OTP
-                </label>
+                <label className="block text-sm font-medium text-gray-300">Enter OTP</label>
                 <input
-                  id="otp"
-                  name="otp"
                   type="text"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                   placeholder="Enter OTP"
                 />
               </div>
             )}
 
-            {/* OTP Button */}
+            {/* OTP & Register Buttons */}
             {!otpSent ? (
-              <button
-                type="button"
-                onClick={handleSendOtp}
-                className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
-              >
+              <button type="button" onClick={handleSendOtp} className="w-full py-2 px-4 bg-yellow-500 text-black font-medium rounded-md hover:bg-yellow-600">
                 Send OTP
               </button>
             ) : (
-              <button
-                type="button"
-                onClick={handleVerifyOtp}
-                className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400"
-              >
+              <button type="button" onClick={handleVerifyOtp} className="w-full py-2 px-4 bg-green-500 text-black font-medium rounded-md hover:bg-green-600">
                 Verify OTP
+              </button>
+            )}
+
+            {otpSent && (
+              <button type="submit" className="w-full py-2 px-4 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600">
+                Register
               </button>
             )}
           </form>

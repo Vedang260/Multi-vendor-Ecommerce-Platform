@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import CountdownTimer from "../components/countDown.jsx";
 
 const categories = [
   {
@@ -44,7 +46,7 @@ function HomePage() {
     },
     {
       id: 3,
-      name: "Sony WH-1000XM4 Headphones",
+      name: "Sony WH-1000XM4",
       price: "$299",
       image: "/products/sony-headphones.jpg",
     },
@@ -58,49 +60,140 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div 
-        className="relative w-full h-96 flex items-center px-10 bg-cover bg-center text-white" 
-        style={{ backgroundImage: "url('pixelcut-export.png')" }} // Replace with actual image
+      <div
+      className="relative w-full min-h-[70vh] md:h-[600px] flex items-center px-10 bg-cover bg-center text-white"
+      style={{ backgroundImage: "url('pixelcut-export.png')" }}
+    >
+      {/* Animated Content */}
+      <motion.div
+        className="max-w-xl"
+        initial={{ opacity: 0, y: 50 }}  // Start hidden and slightly below
+        animate={{ opacity: 1, y: 0 }}  // Fade in and move up
+        transition={{ duration: 0.8, ease: "easeOut" }} // Smooth animation
       >
-        <div className="max-w-xl">
-          <h1 className="text-4xl font-bold">Best Collections of <span className="text-yellow-400">Brands</span> </h1>
-          <p className="mt-2 text-lg text-gray-300">
-            Find the best products at unbeatable prices!
-          </p>
-          <Link 
-            to={'/shop'} 
+        <motion.h1
+          className="text-6xl font-bold"
+          initial={{ opacity: 0, x: -50 }} // Slide from left
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1 }}
+        >
+          Best Collections of <span className="text-yellow-400">Brands</span>
+        </motion.h1>
+
+        <motion.p
+          className="mt-2 text-lg text-gray-300"
+          initial={{ opacity: 0, x: 50 }} // Slide from right
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, delay: 0.3 }} // Delayed animation
+        >
+          Find the best products at unbeatable prices!
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }} // Start small
+          animate={{ opacity: 1, scale: 1 }} // Grow effect
+          transition={{ duration: 0.8, delay: 0.5 }}
+        >
+          <Link
+            to={'/shop'}
             className="mt-5 inline-block px-6 py-3 bg-yellow-500 text-black font-semibold rounded-md hover:bg-yellow-600 transition"
           >
             Shop Now
           </Link>
+
+          <div className="mt-6 grid grid-cols-2 gap-4 text-gray-300 hidden sm:grid lg:place-self-start">
+          <div className="flex items-center space-x-2">
+            <span className="text-yellow-400 text-xl">✔</span>
+            <p>Free Shipping on Orders Over $50</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-yellow-400 text-xl">✔</span>
+            <p>Exclusive Discounts for Members</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-yellow-400 text-xl">✔</span>
+            <p>24/7 Customer Support</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-yellow-400 text-xl">✔</span>
+            <p>100% Secure Payments</p>
+          </div>
         </div>
-      </div>
 
+        </motion.div>
+      </motion.div>
+    </div>
 
+    
       {/* Categories Section */}
       <div className="py-10 px-6">
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Explore Categories</h2>
+      <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Explore Categories</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {categories.map((category) => (
-            <div key={category.name} className="bg-gray-100 p-5 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">{category.name}</h3>
-              <div className="grid grid-cols-3 gap-4">
-                {category.products.map((product) => (
-                  <div key={product.id} className="flex flex-col items-center">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-24 h-24 object-cover rounded-md"
-                    />
-                    <p className="text-sm text-gray-700 mt-2">{product.name}</p>
-                  </div>
-                ))}
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {categories.map((category, index) => (
+          <motion.div
+            key={category.name}
+            initial={{ opacity: 0, y: 50 }} // Fade-in and slide-up effect
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.2 }} // Staggered animation
+            whileHover={{ scale: 1.05, boxShadow: "0px 10px 20px rgba(0,0,0,0.15)" }} // Hover effect
+            className="bg-gray-100 p-5 rounded-lg shadow-md cursor-pointer"
+          >
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">{category.name}</h3>
+            <div className="grid grid-cols-3 gap-4">
+              {category.products.map((product) => (
+                <motion.div
+                  key={product.id}
+                  whileHover={{ scale: 1.1 }} // Image zoom effect on hover
+                  className="flex flex-col items-center"
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-24 h-24 object-cover rounded-md"
+                  />
+                  <p className="text-sm text-gray-700 mt-2">{product.name}</p>
+                </motion.div>
+              ))}
             </div>
-          ))}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+            {/* Limited-Time Offer Section */}
+      <div className="w-full bg-red-600 text-white py-10 px-6 text-center">
+        <h2 className="text-3xl font-bold">🔥 Hurry! Limited-Time Offer</h2>
+        <p className="mt-2 text-lg">Grab the best deals before time runs out!</p>
+
+        {/* Countdown Timer */}
+        <div className="flex justify-center mt-4">
+          <div className="bg-white text-red-600 px-4 py-2 rounded-md text-xl font-bold">
+            <CountdownTimer/>{/* Update dynamically via JavaScript */}
+          </div>
+        </div>
+
+        {/* Featured Deal Product */}
+        <div className="mt-6 flex flex-col md:flex-row justify-center items-center gap-6">
+          <div className="bg-white p-4 rounded-lg shadow-md text-black w-64">
+            <img src="/products/iphone14.jpg" alt="iPhone 14" className="w-full h-40 object-cover rounded-md" />
+            <h3 className="mt-2 text-lg font-semibold">Apple iPhone 14 Pro</h3>
+            <p className="text-red-500 font-bold">$799 <span className="text-gray-500 line-through">$999</span></p>
+            <Link to="/shop" className="mt-3 inline-block px-6 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-700 transition">
+              Shop Now
+            </Link>
+          </div>
+
+          <div className="bg-white p-4 rounded-lg shadow-md text-black w-64">
+            <img src="/products/nike-air-max.jpg" alt="Nike Air Max" className="w-full h-40 object-cover rounded-md" />
+            <h3 className="mt-2 text-lg font-semibold">Nike Air Max Sneakers</h3>
+            <p className="text-red-500 font-bold">$120 <span className="text-gray-500 line-through">$150</span></p>
+            <Link to="/shop" className="mt-3 inline-block px-6 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-700 transition">
+              Shop Now
+            </Link>
+          </div>
         </div>
       </div>
+
       <div className="max-w-7xl mx-auto py-12 px-6">
         <h2 className="text-3xl font-bold text-gray-900 text-center">Featured Products</h2>
         <p className="text-gray-600 text-center mt-2">Discover our top picks for you</p>

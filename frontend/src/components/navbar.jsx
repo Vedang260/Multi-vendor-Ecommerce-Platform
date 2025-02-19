@@ -8,7 +8,7 @@ function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="text-white text-2xl font-bold">
-            <Link to="/">OppuLent</Link>
+            <Link to="/">Opulent</Link>
           </div>
 
           {/* Navigation Links */}
