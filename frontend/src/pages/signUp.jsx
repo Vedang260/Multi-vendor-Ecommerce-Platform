@@ -1,21 +1,26 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";  
 
 function SignupPage() {
+
+  const navigate = useNavigate(); 
+
   const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const [otp, setOtp] = useState("");
-  const [role, setRole] = useState("customer"); // Default role: customer
+  const [role, setRole] = useState("customer");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
-  // Function to generate OTP
+  // Generate OTP
   const handleGenerateOtp = async () => {
     if (email) {
       try {
-        const response = await fetch("https://dummyapi.com/auth/send-otp", {
+        const response = await fetch("http://localhost:8000/api/auth/register/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email, name, password, role }),
         });
 
         const data = await response.json();
@@ -33,7 +38,7 @@ function SignupPage() {
     }
   };
 
-  // Function to verify OTP
+  // Verify OTP
   const handleVerifyOtp = async () => {
     if (!otp) {
       alert("Please enter the OTP");
@@ -41,7 +46,7 @@ function SignupPage() {
     }
 
     try {
-      const response = await fetch("https://dummyapi.com/auth/verify-otp", {
+      const response = await fetch("http://localhost:8000/api/auth/verify-otp/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
@@ -49,7 +54,9 @@ function SignupPage() {
 
       const data = await response.json();
       if (response.ok) {
-        alert("OTP Verified! You are signing up as a " + role);
+        setOtpVerified(true);
+        navigate("/login");
+        alert("OTP Verified! You can now register.");
       } else {
         alert(data.error || "Invalid OTP. Try again.");
       }
@@ -58,10 +65,10 @@ function SignupPage() {
     }
   };
 
-  // Function to register user
+  // Register User
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!otpSent) {
+    if (!otpVerified) {
       alert("Please verify your OTP first");
       return;
     }
@@ -90,12 +97,6 @@ function SignupPage() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
           Create an account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-300">
-          Or{" "}
-          <a href="/login" className="font-medium text-yellow-500 hover:text-yellow-400 transition">
-            sign in to your account
-          </a>
-        </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -184,21 +185,24 @@ function SignupPage() {
                   className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                   placeholder="Enter OTP"
                 />
+                <button
+                  type="button"
+                  onClick={handleVerifyOtp}
+                  className="w-full mt-2 py-2 px-4 bg-green-500 text-black font-medium rounded-md hover:bg-green-600"
+                >
+                  Verify OTP
+                </button>
               </div>
             )}
 
             {/* OTP & Register Buttons */}
-            {!otpSent ? (
+            {!otpSent && (
               <button type="button" onClick={handleGenerateOtp} className="w-full py-2 px-4 bg-yellow-500 text-black font-medium rounded-md hover:bg-yellow-600">
                 Generate OTP
               </button>
-            ) : (
-              <button type="button" onClick={handleVerifyOtp} className="w-full py-2 px-4 bg-green-500 text-black font-medium rounded-md hover:bg-green-600">
-                Verify OTP
-              </button>
             )}
 
-            {otpSent && (
+            {otpVerified && (
               <button type="submit" className="w-full py-2 px-4 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600">
                 Register
               </button>

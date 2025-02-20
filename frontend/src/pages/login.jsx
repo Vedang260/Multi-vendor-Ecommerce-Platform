@@ -7,24 +7,33 @@ function LoginPage() {
   // Function to handle login
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
-      const response = await fetch("https://dummyapi.com/auth/login", {
+      const response = await fetch("http://localhost:8000/api/auth/login/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password }) // ✅ Ensure data is properly formatted
       });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert("Login successful!");
-      } else {
-        alert(data.error || "Invalid credentials");
+  
+      if (!response.ok) {
+        // 🔥 Properly handle HTTP errors like 400 or 500
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Login failed");
       }
+  
+      const data = await response.json();
+      
+      alert("Login successful!");
+  
+      // ✅ Store JWT token for future authenticated requests
+      localStorage.setItem("token", data.access);
     } catch (error) {
-      alert("Error logging in");
+      alert(`Error: ${error.message}`);
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-[#0a192f] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
