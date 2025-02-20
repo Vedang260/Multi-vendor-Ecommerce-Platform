@@ -1,36 +1,42 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
+
+  const navigate = useNavigate(); 
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   // Function to handle login
   const handleLogin = async (e) => {
     e.preventDefault();
-  
     try {
       const response = await fetch("http://localhost:8000/api/auth/login/", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }) // ✅ Ensure data is properly formatted
+        body: JSON.stringify({ email, password }), // FIXED: Using 'email' instead of 'username'
       });
-  
-      if (!response.ok) {
-        // 🔥 Properly handle HTTP errors like 400 or 500
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Login failed");
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Store tokens in localStorage
+        localStorage.setItem("access_token", data.access);
+        localStorage.setItem("refresh_token", data.refresh);
+
+        console.log("Login successful:", data);
+        window.dispatchEvent(new Event("storage")); // Force update of auth state
+
+        // Redirect to home page
+        navigate("/"); // FIXED: Using React Router navigate
+      } else {
+        console.error("Login failed");
       }
-  
-      const data = await response.json();
-      
-      alert("Login successful!");
-  
-      // ✅ Store JWT token for future authenticated requests
-      localStorage.setItem("token", data.access);
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      console.error("Error logging in:", error);
     }
   };
   
@@ -51,7 +57,7 @@ function LoginPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleLogin}>
+        <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                 Email address
@@ -97,7 +103,7 @@ function LoginPage() {
                 </label>
               </div>
               <div className="text-sm">
-                <a href="#" className="font-medium text-yellow-500 hover:text-yellow-400 transition">
+                <a href="/forgot" className="font-medium text-yellow-500 hover:text-yellow-400 transition">
                   Forgot your password?
                 </a>
               </div>
@@ -112,7 +118,6 @@ function LoginPage() {
               </button>
             </div>
           </form>
-
           {/* Divider */}
           <div className="mt-6 relative">
             <div className="absolute inset-0 flex items-center">

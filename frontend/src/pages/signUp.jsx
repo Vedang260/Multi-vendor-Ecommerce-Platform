@@ -7,11 +7,32 @@ function SignupPage() {
 
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [role, setRole] = useState("customer");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleOtpChange = (index, value) => {
+    if (!/^\d?$/.test(value)) return; // Allow only numbers
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Move to next input
+    if (value && index < 5) {
+      document.getElementById(`otp-input-${index + 1}`).focus();
+    }
+  };
+
+  // Handle Backspace
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      document.getElementById(`otp-input-${index - 1}`).focus();
+    }
+  };
+
+  
 
   // Generate OTP
   const handleGenerateOtp = async () => {
@@ -40,8 +61,9 @@ function SignupPage() {
 
   // Verify OTP
   const handleVerifyOtp = async () => {
-    if (!otp) {
-      alert("Please enter the OTP");
+    const otpCode = otp.join("");
+    if (otpCode.length !== 6) {
+      alert("Please enter a valid 6-digit OTP.");
       return;
     }
 
@@ -49,7 +71,7 @@ function SignupPage() {
       const response = await fetch("http://localhost:8000/api/auth/verify-otp/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp }),
+        body: JSON.stringify({ email, otp: otpCode }),
       });
 
       const data = await response.json();
@@ -97,11 +119,28 @@ function SignupPage() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
           Create an account
         </h2>
+        <p className="mt-2 text-center text-sm text-gray-300">
+          Or{" "}
+          <a href="/login" className="font-medium text-yellow-500 hover:text-yellow-400 transition">
+            Login your account
+          </a>
+        </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleRegister}>
+          <div>
+              <label className="block text-sm font-medium text-gray-300">Email address</label>
+              <input
+                type="email"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-300">Full Name</label>
               <input
@@ -111,18 +150,6 @@ function SignupPage() {
                 placeholder="Enter your full name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300">Email address</label>
-              <input
-                type="email"
-                required
-                className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
@@ -175,25 +202,34 @@ function SignupPage() {
             </div>
 
             {/* OTP Section */}
-            {otpSent && (
-              <div>
-                <label className="block text-sm font-medium text-gray-300">Enter OTP</label>
-                <input
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white"
-                  placeholder="Enter OTP"
-                />
-                <button
-                  type="button"
-                  onClick={handleVerifyOtp}
-                  className="w-full mt-2 py-2 px-4 bg-green-500 text-black font-medium rounded-md hover:bg-green-600"
-                >
-                  Verify OTP
-                </button>
+          {otpSent && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300">
+                Enter OTP
+              </label>
+              <div className="flex justify-between gap-2 mt-1">
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    id={`otp-input-${index}`}
+                    type="text"
+                    value={digit}
+                    maxLength="1"
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                    className="w-12 h-12 text-center border border-gray-600 rounded-md bg-gray-700 text-white text-xl font-bold focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                ))}
               </div>
-            )}
+              <button
+                type="button"
+                onClick={handleVerifyOtp}
+                className="w-full mt-4 py-2 px-4 bg-green-500 text-black font-medium rounded-md hover:bg-green-600"
+              >
+                Verify OTP
+              </button>
+            </div>
+          )}
 
             {/* OTP & Register Buttons */}
             {!otpSent && (
