@@ -8,6 +8,9 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
+# import psycopg2
+print("psycopg2 is installed!")
+
 from .serializers import (
     RegisterSerializer, OTPVerifySerializer, LoginSerializer, 
     ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileSerializer

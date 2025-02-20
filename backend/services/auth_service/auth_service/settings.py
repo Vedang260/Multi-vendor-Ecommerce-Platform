@@ -84,10 +84,27 @@ WSGI_APPLICATION = 'auth_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',  
+        'USER': 'postgres',
+        'PASSWORD': 'OpulentCart',
+        'HOST': 'opulentcart.cvesi6kmannv.eu-north-1.rds.amazonaws.com',  # Use the actual endpoint
+        'PORT': '5432',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'test',  
+#         'USER': 'postgres',
+#         'PASSWORD': '123',
+#         'HOST': 'localhost',  # Use the actual endpoint
+#         'PORT': '5432',
+#     }
+# }
+
 
 
 # Password validation
